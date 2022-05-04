@@ -38,8 +38,8 @@
         }
         function getBook(book) {
             return `<tr><td >${book.name}</td><td >${book.price}</td><td >${book.author}</td><td >${book.category.name}</td>` +
-                `<td><button type="button" onclick="showEditForm(${book.id}})">update</button></td>` +
-                `<td><button onclick="deleteBook(${book.id})">Delete</button></tr>`;
+                `<td><button class="updateBook" type="button" onclick="showEditForm(${book.id}})">update</button></td>` +
+                `<td><button class="deleteBook" onclick="deleteBook(${book.id})">Delete</button></tr>`;
         }
 
         function successHandler() {
@@ -62,11 +62,43 @@
                     }
                 });
         }
+        function deleteBook(id){
+            $.ajax({
+                type: "DELETE",
+                url: `/book/${id}`,
+                success: successHandler
+            })
+            event.preventDefault();
+        }
 
 
-
-
-
+        // function updateBook(id){
+        //     let name = $(`#name`).val();
+        //     let author = $(`#author`).val();
+        //     let price = $(`#price`).val();
+        //     let category = $(`#category`).val();
+        //     let book = {
+        //         name : name,
+        //         price : price,
+        //         author: author,
+        //         category:{
+        //             id : category
+        //         }
+        //     }
+        //     $.ajax({
+        //         headers:{
+        //             'Accept' : 'application/json',
+        //             'Content-Type' : 'application/json'
+        //         },
+        //         type:"PUT",
+        //         data: JSON.stringify(book),
+        //         url:`/books/${id}`,
+        //         success:function (){
+        //             successHandler()
+        //         }
+        //     })
+        // }
+        $(document).ready(successHandler())
     </script>
 </head>
 <body>
@@ -117,8 +149,8 @@
             <td th:if="${book.category}" th:text="${book.category.name}"></td>
             <td th:unless="${book.category}"></td>
 
-            <td><a th:href="@{/edit/__${book.id}__ }">Edit</a></td>
-            <td><a th:href="@{/delete/__${book.id}__ }">Delete</a></td>
+            <td><a th:href="${book.id}" class="updateBook" onclick="updateBook()">Edit</a></td>
+            <td><a th:href="${book.id}" class="deleteBook" onclick="deleteBook()">Delete</a></td>
         </tr>
     </th:block>
 </table>
