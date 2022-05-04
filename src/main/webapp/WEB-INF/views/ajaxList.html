@@ -14,7 +14,10 @@
             let newBook = {
                 name : name,
                 price : price,
-                category : category
+                author : author,
+                category: {
+                    id: category
+                }
             }
             // goi ajax
             $.ajax({
@@ -25,7 +28,7 @@
                 type: "POST",
                 data: JSON.stringify(newBook),
                 //tên API
-                url: "/books",
+                url: "/book",
                 //xử lý khi thành công
                 success: successHandler
 
@@ -55,7 +58,7 @@
                         for (let i = 0; i < data.length; i++) {
                             content += getBook(data[i])
                         }
-                        document.getElementById('showList').innerHTML = content;
+                        document.getElementById('bookList').innerHTML = content;
                     }
                 });
         }
@@ -68,7 +71,7 @@
 </head>
 <body>
 <form th:object="${books}">
-    <table>
+    <table id="addBook">
         <tr>
             <td>Name:</td>
             <td><input type="text" id="name" placeholder="name"></td>
@@ -97,7 +100,7 @@
 </form>
 
 <h1>Book</h1>
-<table id="showList" border="1">
+<table id="bookList" border="1">
     <tr>
         <th>Name </th>
         <th>Price</th>
@@ -113,7 +116,6 @@
             <td th:text="${book.author}"></td>
             <td th:if="${book.category}" th:text="${book.category.name}"></td>
             <td th:unless="${book.category}"></td>
-
 
             <td><a th:href="@{/edit/__${book.id}__ }">Edit</a></td>
             <td><a th:href="@{/delete/__${book.id}__ }">Delete</a></td>

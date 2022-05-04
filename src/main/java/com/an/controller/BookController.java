@@ -28,9 +28,11 @@ public class BookController {
 
 
     @GetMapping("/list")
-    public ModelAndView showListBook(){
-        Iterable<Book> books = bookService.findAll();
-        return new ModelAndView("/ajaxList","books",books);
+    public ModelAndView showList(){
+        ModelAndView modelAndView = new ModelAndView("ajaxList");
+        modelAndView.addObject("books",bookService.findAll());
+        modelAndView.addObject("categories",categoryService.findAll());
+        return modelAndView;
     }
     @GetMapping
     public ResponseEntity<Iterable<Book>> findAll(){
