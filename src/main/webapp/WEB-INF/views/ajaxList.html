@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Book</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+        function addNewBook(){
+            //lay du lieu
+            let name = $('#name').val();
+            let price = $('#price').val();
+            let author = $('#author').val();
+            let category = $('#category').val();
+            let newBook = {
+                name : name,
+                price : price,
+                category : category
+            }
+            // goi ajax
+            $.ajax({
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                type: "POST",
+                data: JSON.stringify(newBook),
+                //tên API
+                url: "/books",
+                //xử lý khi thành công
+                success: successHandler
+
+            });
+            //chặn sự kiện mặc định của thẻ
+            event.preventDefault();
+        }
+        function getBook(book) {
+            return `<tr><td >${book.name}</td><td >${book.price}</td><td >${book.author}</td><td >${book.category.name}</td>` +
+                `<td><button type="button" onclick="showEditForm(${book.id}})">update</button></td>` +
+                `<td><button onclick="deleteBook(${book.id})">Delete</button></tr>`;
+        }
+
+        function successHandler() {
+                $.ajax({
+                    type: "GET",
+                    url: "/book",
+                    success: function (data) {
+                        let content = '<tr>\n' +
+                            '        <th>Name </th>\n' +
+                            '        <th>Price</th>\n' +
+                            '        <th>Author</th>\n' +
+                            '        <th>Category</th>\n' +
+                            '        <th>Edit</th>\n' +
+                            '        <th>Delete</th>\n' +
+                            '    </tr>';
+                        for (let i = 0; i < data.length; i++) {
+                            content += getBook(data[i])
+                        }
+                        document.getElementById('showList').innerHTML = content;
+                    }
+                });
+        }
+
+
+
+
+
+    </script>
+</head>
+<body>
+<form th:object="${books}">
+    <table>
+        <tr>
+            <td>Name:</td>
+            <td><input type="text" id="name" placeholder="name"></td>
+        </tr>
+        <tr>
+            <td>Price:</td>
+            <td><input type="text" id="price" placeholder="price"></td>
+        </tr>
+        <tr>
+            <td>Author:</td>
+            <td><input type="text" id="author" placeholder="author"></td>
+        </tr>
+        <tr>
+            <td>Category:</td>
+            <td>
+                <select id="category">
+                    <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><input type="submit" value="Add" onclick="addNewBook()" ></td>
+        </tr>
+    </table>
+</form>
+
+<h1>Book</h1>
+<table id="showList" border="1">
+    <tr>
+        <th>Name </th>
+        <th>Price</th>
+        <th>Author</th>
+        <th>Category</th>
+        <th>Edit</th>
+        <th>Delete</th>
+    </tr>
+    <th:block th:each="book : ${books}">
+        <tr>
+            <td th:text="${book.name}"></td>
+            <td th:text="${book.price}"></td>
+            <td th:text="${book.author}"></td>
+            <td th:if="${book.category}" th:text="${book.category.name}"></td>
+            <td th:unless="${book.category}"></td>
+
+
+            <td><a th:href="@{/edit/__${book.id}__ }">Edit</a></td>
+            <td><a th:href="@{/delete/__${book.id}__ }">Delete</a></td>
+        </tr>
+    </th:block>
+</table>
+</body>
+</html>
